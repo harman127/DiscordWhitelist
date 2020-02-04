@@ -5,7 +5,7 @@
 --- Config ---
 notWhitelisted = "You are not whitelisted for this server." -- Message displayed when they are not whitelist with the role
 noDiscord = "You must have Discord open to join this server." -- Message displayed when discord is not found
-debug = false
+
 
 
 roles = { -- Role nickname(s) needed to pass the whitelist
@@ -14,7 +14,7 @@ roles = { -- Role nickname(s) needed to pass the whitelist
     "Role3",
 }
 
-
+debugCode = false
 --- Code ---
 
 AddEventHandler("playerConnecting", function(name, setCallback, deferrals)
@@ -26,7 +26,7 @@ AddEventHandler("playerConnecting", function(name, setCallback, deferrals)
     for k, v in ipairs(GetPlayerIdentifiers(src)) do
         if string.sub(v, 1, string.len("discord:")) == "discord:" then
             identifierDiscord = v
-            if debug then
+            if debugCode then
                 deferrals.update("Discord ID found. Requesting check with discord_perms.")
             end
         end
@@ -34,14 +34,15 @@ AddEventHandler("playerConnecting", function(name, setCallback, deferrals)
 
     if identifierDiscord then
         for i = 1, #roles do
-            if debug then
+            if debugCode  then
                 deferrals.update("Checking to see if user has "..roles[i])
             end
             if exports.discord_perms:IsRolePresent(src, roles[i]) then
                 role_found = true
+                break
             end
         end
-        if role_found then
+        if role_found  then
             deferrals.done()
         else
             deferrals.done(notWhitelisted)
